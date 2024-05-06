@@ -9,7 +9,7 @@ app.use(express.json());
 
 // database set-up starts:
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
-const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.xmq0nwv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@clusteremajhon.gqhceta.mongodb.net/?retryWrites=true&w=majority&appName=ClusterEmaJhon`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -24,32 +24,32 @@ async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
-        const productsCollection = client.db('emazone-ecommerce').collection('products');
+        const productsCollection = client.db('emajhon').collection('products');
         console.log("Connected to MongoDB!");
 
         // CRUD 
         // READ :
-        app.get('/products', async (req, res) => {
+        app.get('/product', async (req, res) => {
             const query = {};
             const cursor = productsCollection.find(query);
             const products = await cursor.toArray();
             res.send(products);
         });
         // READ EACH :
-        app.get('/products/:id', async (req, res) => {
+        app.get('/product/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) };
             const product = await productsCollection.findOne(query);
             res.send(product);
         });
         // CREATE :
-        app.post('/products', async (req, res) => {
+        app.post('/product', async (req, res) => {
             const newProduct = req.body;
             const result = await productsCollection.insertOne(newProduct);
             res.send(result);
         });
         // DELETE :
-        app.delete('/products/:id', async (req, res) => {
+        app.delete('/product/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) };
             const result = await productsCollection.deleteOne(query);
@@ -79,6 +79,14 @@ async function run() {
             const result = await productsCollection.updateOne(query, updatedDoc, options);
             res.send(result);
         });
+
+        // DB collection Data Count
+        app.get('/pagination', async (req, res) => {
+            const query = {};
+            const cursor = productsCollection.find(query);
+            const count = await cursor.count();
+            res.send({ count });
+        })
 
     } finally {
         // Ensures that the client will close when you finish/error
