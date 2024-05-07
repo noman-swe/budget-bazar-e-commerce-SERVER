@@ -96,6 +96,18 @@ async function run() {
             res.send({ count });
         })
 
+        // use post to get products by ids for carts
+        app.post('/productByKeys', async (req, res) => {
+            const keys = req.body;
+            // console.log(keys);
+            const ids = keys.map(id => new ObjectId(id));
+            const query = { _id: { $in: ids } };
+            const cursor = productsCollection.find(query);
+            const products = await cursor.toArray();
+            res.send(products);
+
+        })
+
     } finally {
         // Ensures that the client will close when you finish/error
         // await client.close();
